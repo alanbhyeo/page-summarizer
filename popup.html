@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Summarizer</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="header-content">
+        <span class="logo">✦</span>
+        <h1>Page Summarizer</h1>
+        <button class="icon-btn settings-toggle" id="settingsBtn" title="Settings">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel hidden" id="settingsPanel">
+      <label for="apiKeyInput">Claude API Key</label>
+      <div class="input-row">
+        <input
+          type="password"
+          id="apiKeyInput"
+          placeholder="sk-ant-api03-..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="save-btn" id="saveKeyBtn">Save</button>
+      </div>
+      <p class="hint">Get your key at <span class="hint-url">console.anthropic.com</span></p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- State: No API Key -->
+      <div class="state" id="noKeyState">
+        <div class="empty-icon">🔑</div>
+        <p class="state-text">Add your Claude API key to start summarizing pages.</p>
+        <button class="primary-btn" id="openSettingsBtn">Add API Key</button>
+      </div>
+
+      <!-- State: Ready -->
+      <div class="state hidden" id="readyState">
+        <button class="primary-btn summarize-btn" id="summarizeBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          Summarize This Page
+        </button>
+      </div>
+
+      <!-- State: Loading -->
+      <div class="state hidden" id="loadingState">
+        <div class="spinner"></div>
+        <p class="state-text muted">Analyzing page content…</p>
+      </div>
+
+      <!-- State: Result -->
+      <div class="state hidden" id="resultState">
+        <div class="result-header">
+          <span class="result-label">Key Points</span>
+          <button class="icon-btn" id="refreshBtn" title="Summarize again">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+        </div>
+        <p class="page-title-display" id="pageTitle"></p>
+        <ul class="bullet-list" id="bulletList"></ul>
+        <button class="copy-btn" id="copyBtn">Copy to Clipboard</button>
+      </div>
+
+      <!-- State: Error -->
+      <div class="state hidden" id="errorState">
+        <div class="error-icon">⚠️</div>
+        <p class="error-message" id="errorMsg">Something went wrong.</p>
+        <button class="primary-btn" id="retryBtn">Try Again</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

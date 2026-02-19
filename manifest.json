@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Page Summarizer",
+  "version": "1.0",
+  "description": "Summarize any webpage into 5 key bullet points using Claude AI.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.anthropic.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Summarize This Page"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

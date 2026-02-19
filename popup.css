@@ -1,0 +1,348 @@
+/* ─── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 370px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+  background: #0d0d1a;
+  color: #ddd8f0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* ─── Container ─────────────────────────────────────────── */
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+/* ─── Header ────────────────────────────────────────────── */
+header {
+  background: linear-gradient(135deg, #131325, #1a1a30);
+  padding: 13px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.logo {
+  font-size: 16px;
+  color: #8b7cf8;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+h1 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e8e4ff;
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+/* ─── Icon Button (shared) ──────────────────────────────── */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  color: #c0b8f0;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ─── Settings Panel ────────────────────────────────────── */
+.settings-panel {
+  background: #10101f;
+  padding: 13px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.settings-panel label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 7px;
+}
+
+.input-row {
+  display: flex;
+  gap: 7px;
+}
+
+.input-row input {
+  flex: 1;
+  background: #1b1b30;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 7px;
+  padding: 7px 10px;
+  color: #ddd8f0;
+  font-size: 12.5px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 0;
+}
+
+.input-row input::placeholder {
+  color: #3a3a55;
+}
+
+.input-row input:focus {
+  border-color: rgba(139, 124, 248, 0.6);
+  box-shadow: 0 0 0 2px rgba(139, 124, 248, 0.12);
+}
+
+.save-btn {
+  background: #8b7cf8;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.save-btn:hover {
+  background: #a090f9;
+}
+
+.save-btn:active {
+  transform: scale(0.97);
+}
+
+.hint {
+  margin-top: 7px;
+  font-size: 11px;
+  color: #444;
+}
+
+.hint-url {
+  color: #5a5070;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ─── Main Content Area ─────────────────────────────────── */
+.main-content {
+  padding: 18px 15px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.state.hidden {
+  display: none;
+}
+
+/* ─── Empty / No-key State ──────────────────────────────── */
+.empty-icon {
+  font-size: 26px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.state-text {
+  color: #888;
+  font-size: 12.5px;
+  margin-bottom: 14px;
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+/* ─── Primary Button ────────────────────────────────────── */
+.primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  background: linear-gradient(135deg, #7c6df5, #9b8cf8);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 2px 12px rgba(124, 109, 245, 0.3);
+}
+
+.primary-btn:hover {
+  opacity: 0.92;
+  box-shadow: 0 4px 18px rgba(124, 109, 245, 0.4);
+}
+
+.primary-btn:active {
+  transform: scale(0.98);
+}
+
+/* ─── Loading State ─────────────────────────────────────── */
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 2.5px solid rgba(139, 124, 248, 0.18);
+  border-top-color: #8b7cf8;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.muted {
+  color: #555;
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+/* ─── Result State ──────────────────────────────────────── */
+#resultState {
+  align-items: stretch;
+  text-align: left;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.result-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex: 1;
+}
+
+.page-title-display {
+  font-size: 11.5px;
+  color: #444;
+  margin-bottom: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+/* ─── Bullet List ───────────────────────────────────────── */
+.bullet-list {
+  list-style: none;
+  margin-bottom: 13px;
+}
+
+.bullet-list li {
+  display: flex;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #ccc8e8;
+  font-size: 13px;
+  line-height: 1.55;
+  animation: fadeIn 0.3s ease both;
+}
+
+.bullet-list li:last-child {
+  border-bottom: none;
+}
+
+.bullet-list li:nth-child(1) { animation-delay: 0.05s; }
+.bullet-list li:nth-child(2) { animation-delay: 0.10s; }
+.bullet-list li:nth-child(3) { animation-delay: 0.15s; }
+.bullet-list li:nth-child(4) { animation-delay: 0.20s; }
+.bullet-list li:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bullet-list li::before {
+  content: '▸';
+  color: #8b7cf8;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ─── Copy Button ───────────────────────────────────────── */
+.copy-btn {
+  width: 100%;
+  background: transparent;
+  color: #7a6ee0;
+  border: 1px solid rgba(139, 124, 248, 0.22);
+  border-radius: 8px;
+  padding: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.copy-btn:hover {
+  background: rgba(139, 124, 248, 0.08);
+  color: #9b8ff8;
+  border-color: rgba(139, 124, 248, 0.35);
+}
+
+.copy-btn.copied {
+  background: rgba(72, 199, 142, 0.08);
+  color: #48c78e;
+  border-color: rgba(72, 199, 142, 0.3);
+}
+
+/* ─── Error State ───────────────────────────────────────── */
+.error-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: #997;
+  font-size: 12.5px;
+  margin-bottom: 15px;
+  line-height: 1.55;
+  max-width: 260px;
+}
