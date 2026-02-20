@@ -75,7 +75,7 @@ apiKeyInput.addEventListener('keydown', e => {
 
 copyBtn.addEventListener('click', async () => {
   const text = Array.from(bulletList.querySelectorAll('li'))
-    .map(li => `• ${li.textContent}`)
+    .map(li => li.textContent)
     .join('\n');
 
   try {
@@ -183,11 +183,11 @@ async function summarize() {
 async function callClaude(content, title) {
   const { apiKey } = await chrome.storage.local.get('apiKey');
 
+  const system = `You summarize webpages as haiku poems. A haiku is exactly 3 lines: 5 syllables, 7 syllables, 5 syllables. Return only the 3 lines — no titles, labels, or extra text.`;
+
   const prompt =
-    `Summarize the following webpage in exactly 5 concise bullet points. ` +
-    `Each point should capture a distinct key insight or takeaway. ` +
-    `Return exactly 5 lines of plain text — one point per line — with no ` +
-    `bullet symbols, numbers, dashes, or extra formatting. Just the text.\n\n` +
+    `Write a haiku (5-7-5 syllables) that captures the essence of this webpage. ` +
+    `Return exactly 3 lines of plain text with no extra formatting.\n\n` +
     `Page: "${title}"\n\n` +
     `Content:\n${content}`;
 
@@ -203,7 +203,8 @@ async function callClaude(content, title) {
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 1024,
+        max_tokens: 60,
+        system,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
@@ -239,7 +240,7 @@ async function callClaude(content, title) {
     .split('\n')
     .map(l => l.trim().replace(/^[\d]+[.)]\s*/, '').replace(/^[•\-\*▸]\s*/, ''))
     .filter(l => l.length > 0)
-    .slice(0, 5);
+    .slice(0, 3);
 
   if (lines.length === 0) {
     throw new Error('Could not generate a summary. Please try again.');
