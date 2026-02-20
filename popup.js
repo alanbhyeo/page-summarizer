@@ -20,7 +20,7 @@ const shortSummaryBtn = $('shortSummaryBtn');
 const haikuBtn        = $('haikuBtn');
 const limerickBtn     = $('limerickBtn');
 const retryBtn        = $('retryBtn');
-const refreshBtn      = $('refreshBtn');
+const backBtn         = $('backBtn');
 const copyBtn         = $('copyBtn');
 const bulletList      = $('bulletList');
 const proseResult     = $('proseResult');
@@ -116,7 +116,7 @@ shortSummaryBtn.addEventListener('click', () => { currentMode = 'short'; summari
 haikuBtn.addEventListener('click', () => { currentMode = 'haiku'; summarize(); });
 limerickBtn.addEventListener('click', () => { currentMode = 'limerick'; summarize(); });
 retryBtn.addEventListener('click', summarize);
-refreshBtn.addEventListener('click', summarize);
+backBtn.addEventListener('click', () => showState('ready'));
 
 // ─── Summarize ────────────────────────────────────────────────────────────────
 
