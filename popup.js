@@ -184,8 +184,9 @@ async function callClaude(content, title) {
   const { apiKey } = await chrome.storage.local.get('apiKey');
 
   const prompt =
-    `Summarize the following webpage in exactly 5 concise bullet points. ` +
-    `Each point should capture a distinct key insight or takeaway. ` +
+    `Summarize the following webpage in exactly 5 bullet points. ` +
+    `Each point must be a single short sentence of 10 words or fewer. ` +
+    `Be direct and cut all unnecessary words. ` +
     `Return exactly 5 lines of plain text — one point per line — with no ` +
     `bullet symbols, numbers, dashes, or extra formatting. Just the text.\n\n` +
     `Page: "${title}"\n\n` +
@@ -203,7 +204,7 @@ async function callClaude(content, title) {
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 1024,
+        max_tokens: 300,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
