@@ -50,13 +50,24 @@
 
       <!-- State: Ready -->
       <div class="state hidden" id="readyState">
-        <button class="primary-btn summarize-btn" id="summarizeBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-          </svg>
-          Summarize This Page
-        </button>
+        <div class="mode-grid">
+          <button class="mode-btn" id="summaryBtn">
+            <span class="mode-btn-icon">≡</span>
+            Summary
+          </button>
+          <button class="mode-btn" id="shortSummaryBtn">
+            <span class="mode-btn-icon">⚡</span>
+            Short
+          </button>
+          <button class="mode-btn" id="haikuBtn">
+            <span class="mode-btn-icon">✦</span>
+            Haiku
+          </button>
+          <button class="mode-btn" id="limerickBtn">
+            <span class="mode-btn-icon">♩</span>
+            Limerick
+          </button>
+        </div>
       </div>
 
       <!-- State: Loading -->
@@ -68,7 +79,7 @@
       <!-- State: Result -->
       <div class="state hidden" id="resultState">
         <div class="result-header">
-          <span class="result-label">Haiku</span>
+          <span class="result-label" id="resultLabel">Summary</span>
           <button class="icon-btn" id="refreshBtn" title="Summarize again">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
@@ -78,6 +89,7 @@
         </div>
         <p class="page-title-display" id="pageTitle"></p>
         <ul class="bullet-list" id="bulletList"></ul>
+        <div class="prose-result hidden" id="proseResult"></div>
         <button class="copy-btn" id="copyBtn">Copy to Clipboard</button>
       </div>
 

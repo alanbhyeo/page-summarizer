@@ -10,18 +10,27 @@ const MAX_CHARS      = 50_000; // ~12 500 tokens — well within the 200K contex
 
 const $ = id => document.getElementById(id);
 
-const settingsBtn    = $('settingsBtn');
-const settingsPanel  = $('settingsPanel');
-const apiKeyInput    = $('apiKeyInput');
-const saveKeyBtn     = $('saveKeyBtn');
+const settingsBtn     = $('settingsBtn');
+const settingsPanel   = $('settingsPanel');
+const apiKeyInput     = $('apiKeyInput');
+const saveKeyBtn      = $('saveKeyBtn');
 const openSettingsBtn = $('openSettingsBtn');
-const summarizeBtn   = $('summarizeBtn');
-const retryBtn       = $('retryBtn');
-const refreshBtn     = $('refreshBtn');
-const copyBtn        = $('copyBtn');
-const bulletList     = $('bulletList');
-const errorMsg       = $('errorMsg');
-const pageTitle      = $('pageTitle');
+const summaryBtn      = $('summaryBtn');
+const shortSummaryBtn = $('shortSummaryBtn');
+const haikuBtn        = $('haikuBtn');
+const limerickBtn     = $('limerickBtn');
+const retryBtn        = $('retryBtn');
+const refreshBtn      = $('refreshBtn');
+const copyBtn         = $('copyBtn');
+const bulletList      = $('bulletList');
+const proseResult     = $('proseResult');
+const errorMsg        = $('errorMsg');
+const pageTitle       = $('pageTitle');
+const resultLabel     = $('resultLabel');
+
+// ─── Mode Tracking ────────────────────────────────────────────────────────────
+
+let currentMode = 'summary';
 
 // ─── State Management ─────────────────────────────────────────────────────────
 
@@ -74,9 +83,10 @@ apiKeyInput.addEventListener('keydown', e => {
 // ─── Copy to Clipboard ────────────────────────────────────────────────────────
 
 copyBtn.addEventListener('click', async () => {
-  const text = Array.from(bulletList.querySelectorAll('li'))
-    .map(li => li.textContent)
-    .join('\n');
+  const isBulletMode = currentMode === 'summary' || currentMode === 'short';
+  const text = isBulletMode
+    ? Array.from(bulletList.querySelectorAll('li')).map(li => li.textContent).join('\n')
+    : Array.from(proseResult.querySelectorAll('p')).map(p => p.textContent).join('\n');
 
   try {
     await navigator.clipboard.writeText(text);
@@ -99,11 +109,16 @@ copyBtn.addEventListener('click', async () => {
   }, 2000);
 });
 
-// ─── Summarize ────────────────────────────────────────────────────────────────
+// ─── Mode Button Handlers ─────────────────────────────────────────────────────
 
-summarizeBtn.addEventListener('click', summarize);
+summaryBtn.addEventListener('click', () => { currentMode = 'summary'; summarize(); });
+shortSummaryBtn.addEventListener('click', () => { currentMode = 'short'; summarize(); });
+haikuBtn.addEventListener('click', () => { currentMode = 'haiku'; summarize(); });
+limerickBtn.addEventListener('click', () => { currentMode = 'limerick'; summarize(); });
 retryBtn.addEventListener('click', summarize);
 refreshBtn.addEventListener('click', summarize);
+
+// ─── Summarize ────────────────────────────────────────────────────────────────
 
 async function summarize() {
   const { apiKey } = await chrome.storage.local.get('apiKey');
@@ -159,17 +174,35 @@ async function summarize() {
       ? pageText.slice(0, MAX_CHARS) + '\n[Content truncated]'
       : pageText;
 
-    // Call Claude API
-    const bullets = await callClaude(content, tab.title || 'Untitled Page');
+    // Call Claude API with current mode
+    const lines = await callClaude(content, tab.title || 'Untitled Page', currentMode);
+
+    const isBulletMode = currentMode === 'summary' || currentMode === 'short';
+    const labelMap = { summary: 'Summary', short: 'Short Summary', haiku: 'Haiku', limerick: 'Limerick' };
 
     // Render results
     pageTitle.textContent = tab.title || '';
-    bulletList.innerHTML = '';
-    bullets.forEach(text => {
-      const li = document.createElement('li');
-      li.textContent = text;
-      bulletList.appendChild(li);
-    });
+    resultLabel.textContent = labelMap[currentMode];
+
+    if (isBulletMode) {
+      proseResult.classList.add('hidden');
+      bulletList.classList.remove('hidden');
+      bulletList.innerHTML = '';
+      lines.forEach(text => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        bulletList.appendChild(li);
+      });
+    } else {
+      bulletList.classList.add('hidden');
+      proseResult.className = `prose-result prose-${currentMode}`;
+      proseResult.innerHTML = '';
+      lines.forEach(text => {
+        const p = document.createElement('p');
+        p.textContent = text;
+        proseResult.appendChild(p);
+      });
+    }
 
     showState('result');
   } catch (err) {
@@ -180,16 +213,49 @@ async function summarize() {
 
 // ─── Claude API Call ──────────────────────────────────────────────────────────
 
-async function callClaude(content, title) {
+async function callClaude(content, title, mode) {
   const { apiKey } = await chrome.storage.local.get('apiKey');
 
-  const system = `You summarize webpages as haiku poems. A haiku is exactly 3 lines: 5 syllables, 7 syllables, 5 syllables. Return only the 3 lines — no titles, labels, or extra text.`;
+  let system, promptText, maxTokens, maxLines;
 
-  const prompt =
-    `Write a haiku (5-7-5 syllables) that captures the essence of this webpage. ` +
-    `Return exactly 3 lines of plain text with no extra formatting.\n\n` +
-    `Page: "${title}"\n\n` +
-    `Content:\n${content}`;
+  switch (mode) {
+    case 'short':
+      system = `You summarize webpages into exactly 5 bullet points. Each bullet must be a single sentence of under 10 words. Return only the 5 lines of plain text — no bullets, numbers, or extra formatting.`;
+      promptText =
+        `Summarize this webpage in exactly 5 key points, each a single sentence under 10 words.\n\n` +
+        `Page: "${title}"\n\nContent:\n${content}`;
+      maxTokens = 120;
+      maxLines = 5;
+      break;
+
+    case 'haiku':
+      system = `You summarize webpages as haiku poems. A haiku is exactly 3 lines: 5 syllables, 7 syllables, 5 syllables. Return only the 3 lines — no titles, labels, bullets, or extra text.`;
+      promptText =
+        `Write a haiku (5-7-5 syllables) that captures the essence of this webpage. ` +
+        `Return exactly 3 lines of plain text with no extra formatting.\n\n` +
+        `Page: "${title}"\n\nContent:\n${content}`;
+      maxTokens = 80;
+      maxLines = 3;
+      break;
+
+    case 'limerick':
+      system = `You summarize webpages as limericks. A limerick is exactly 5 lines with AABBA rhyme scheme. Write in a humorous, witty, satirical, or whimsical style. Return only the 5 lines — no titles, labels, bullets, or extra text.`;
+      promptText =
+        `Write a limerick that humorously captures the essence of this webpage. ` +
+        `Return exactly 5 lines of plain text with no extra formatting.\n\n` +
+        `Page: "${title}"\n\nContent:\n${content}`;
+      maxTokens = 150;
+      maxLines = 5;
+      break;
+
+    default: // 'summary'
+      system = `You summarize webpages into exactly 5 clear bullet points. Each bullet is 1-2 sentences capturing a key point or insight. Return only the 5 lines of plain text — no bullets, numbers, or extra formatting.`;
+      promptText =
+        `Summarize this webpage in exactly 5 key points.\n\n` +
+        `Page: "${title}"\n\nContent:\n${content}`;
+      maxTokens = 400;
+      maxLines = 5;
+  }
 
   let response;
   try {
@@ -203,9 +269,9 @@ async function callClaude(content, title) {
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 60,
+        max_tokens: maxTokens,
         system,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: 'user', content: promptText }],
       }),
     });
   } catch {
@@ -240,7 +306,7 @@ async function callClaude(content, title) {
     .split('\n')
     .map(l => l.trim().replace(/^[\d]+[.)]\s*/, '').replace(/^[•\-\*▸]\s*/, ''))
     .filter(l => l.length > 0)
-    .slice(0, 3);
+    .slice(0, maxLines);
 
   if (lines.length === 0) {
     throw new Error('Could not generate a summary. Please try again.');
