@@ -116,7 +116,14 @@ shortSummaryBtn.addEventListener('click', () => { currentMode = 'short'; summari
 haikuBtn.addEventListener('click', () => { currentMode = 'haiku'; summarize(); });
 limerickBtn.addEventListener('click', () => { currentMode = 'limerick'; summarize(); });
 retryBtn.addEventListener('click', summarize);
-backBtn.addEventListener('click', () => showState('ready'));
+backBtn.addEventListener('click', () => {
+  bulletList.innerHTML = '';
+  proseResult.innerHTML = '';
+  proseResult.classList.add('hidden');
+  bulletList.classList.remove('hidden');
+  pageTitle.textContent = '';
+  showState('ready');
+});
 
 // ─── Summarize ────────────────────────────────────────────────────────────────
 
