@@ -183,10 +183,14 @@ async function summarize() {
 async function callClaude(content, title) {
   const { apiKey } = await chrome.storage.local.get('apiKey');
 
+  const system =
+    `You write ultra-brief summaries. Every sentence must be 8 words or fewer. ` +
+    `No compound sentences. No conjunctions like "and", "while", "though", "but" to join clauses. ` +
+    `One simple fact per line. Ruthlessly cut detail.`;
+
   const prompt =
     `Summarize the following webpage in exactly 5 bullet points. ` +
-    `Each point must be a single short sentence of 10 words or fewer. ` +
-    `Be direct and cut all unnecessary words. ` +
+    `Each point is one sentence, maximum 8 words. ` +
     `Return exactly 5 lines of plain text — one point per line — with no ` +
     `bullet symbols, numbers, dashes, or extra formatting. Just the text.\n\n` +
     `Page: "${title}"\n\n` +
@@ -205,6 +209,7 @@ async function callClaude(content, title) {
       body: JSON.stringify({
         model: CLAUDE_MODEL,
         max_tokens: 300,
+        system,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
